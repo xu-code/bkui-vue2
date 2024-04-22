@@ -183,8 +183,18 @@ export default {
       this.dispatch('bkCascade', 'on-cascade-click')
     },
     cascadeHover (item) {
-      if (this.trigger === 'hover' && item.children && item.children.length) {
+      if (this.trigger !== 'hover') {
+        return
+      }
+
+      // 没有children，调用 handleItem 会导致直接选中，因此必须保证 children 存在
+      if (item.children && item.children.length) {
         this.handleItem(item, false)
+      } else {
+        // 触发父级更新，并根据当前 hover item 更新子集面板
+        this.childrenList = item.children || []
+        this.emitUpdate([item])
+        this.dispatch('bkCascade', 'on-popover-width', item)
       }
     },
     handleItem (item, fromInit = false) {
