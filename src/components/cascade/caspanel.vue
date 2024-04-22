@@ -194,7 +194,7 @@ export default {
         // 触发父级更新，并根据当前 hover item 更新子集面板
         this.childrenList = item.children || []
         this.emitUpdate([item])
-        this.dispatch('bkCascade', 'on-popover-width', item)
+        this.dispatch('bkCascade', 'on-popover-width', { item })
       }
     },
     handleItem (item, fromInit = false) {
