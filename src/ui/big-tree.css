@@ -20,6 +20,9 @@
             height: 100%;
         }
     }
+    .fixed-width {
+        width: max-content;
+    }
     .bk-big-tree-empty {
         text-align: center;
         font-size: 14px;

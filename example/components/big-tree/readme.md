@@ -478,6 +478,31 @@
 
 :::
 
+### 超出滚动条 {page=#/big-tree}
+
+:::demo 默认情况下组件宽度与容器宽度相同且不会有滚动条，如果需要滚动条，需要配置`fixed-width`属性
+
+```html
+<template>
+    <section style="width: 150px">
+        <bk-big-tree
+            enable-title-tip
+            ref="tree"
+            fixed-width
+            :selectable="true"
+            :default-expanded-nodes="['0']"
+            :default-selected-node="'0-2'"
+            :show-checkbox="isShowCheckbox"
+            :data="data"
+            :show-link-line="isShowLinkLine"
+            node-icon="bk-icon icon-text-file">
+            <div slot-scope="{node,data}">层级：{{node.level+1}}，名称： {{data.name}}</div>
+        </bk-big-tree>
+    </section>
+</template>
+
+:::
+
 ### 属性 {page=#/big-tree}
 | 参数 | 说明 | 类型 | 可选值 | 默认值 |
 |------|------|------|------|------|
@@ -518,6 +543,7 @@
 | configurable | 仅作为数据展示用时，可将此属性配置为`false`，从而节省渲染开销，但会导致数据失去响应式的能力 | Boolean | —— | `true` |
 | padding | 节点左侧缩进的距离，默认为 16 | Number | —— | 16 |
 | enable-title-tip | 是否开启节点tip提示 | Boolean | —— | false |
+| fixed-width | 是否使用固定宽度布局 | Boolean | -- | false |
 
 ### 事件 {page=#/big-tree}
 | 事件名称 | 说明 | 参数 |
