@@ -414,9 +414,20 @@ class TableStore {
           this.table.$emit('current-change', row, oldCurrentRow)
         }
       },
-      rowSelectedChanged (states, row) {
+      rowSelectedChanged (states, row, index) {
         const changed = toggleRowSelection(states, row)
         const selection = states.selection
+        if (this.table.shiftMulti.setStore(row, index)) {
+          const { start, end } = this.table.shiftMulti.getStore()
+          ;(this.table.data.slice(start.index, end.index + 1) || []).forEach(child => {
+            if (!states.selection.includes(child)) {
+              states.selection.push(child)
+            }
+          })
+          setTimeout(() => {
+            this.table.$el.style.setProperty('user-select', 'inherit')
+          })
+        }
 
         if (changed) {
           const table = this.table
