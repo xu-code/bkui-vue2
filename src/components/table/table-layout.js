@@ -309,7 +309,7 @@ class TableLayout {
     const rows = this.table.$refs.tableBody.$refs.row || []
     const rowsHeight = rows.reduce((accumulator, row) => {
       const key = row.getAttribute('data-table-row')
-      accumulator[key] = row.offsetHeight
+      accumulator[key] = row.getBoundingClientRect().height
       return accumulator
     }, {})
     if (isShallowEqual(rowsHeight, this.rowsHeight)) return
