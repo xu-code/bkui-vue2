@@ -89,7 +89,7 @@
 
 ### 可折叠 {page=#/resize-layout}
 
-:::demo 设置`collapsible`属性为`true`, 开启折叠功能
+:::demo 设置`collapsible`属性为`true`, 开启折叠功能d
 
 ```html
 <template>
@@ -107,12 +107,12 @@
 
 ```html
 <template>
-    <bk-resize-layout :collapsible="true" style="height: 500px;">
-        <bk-resize-layout slot="aside" placement="top" :border="false" style="height: 100%">
+    <bk-resize-layout :collapsible="true" style="height: 500px;" :auto-minimize="true">
+        <bk-resize-layout slot="aside" placement="top" :border="false" style="height: 100%" :collapsible="true" :auto-minimize="true">
             <div slot="aside">aside-top</div>
             <div slot="main">main-1</div>
         </bk-resize-layout>
-        <bk-resize-layout slot="main" placement="bottom" :border="false" style="height: 100%">
+        <bk-resize-layout slot="main" placement="bottom" :border="false" style="height: 100%" :collapsible="true" :auto-minimize="true">
             <div slot="aside">aside-bottom</div>
             <div slot="main">main-2</div>
         </bk-resize-layout>

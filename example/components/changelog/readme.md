@@ -8,6 +8,99 @@
 
 <div class="changelog-wrapper">
 
+### 2.5.9-beta.22 {page=#/changelog}
+
+* **[fix]**:
+    - [Table 表格](#/table) 修复表格使用fixed固定时，操作行行高错位问题
+    - [Big Tree 大树](#/big-tree) bigTree组件没有横向滚动条
+
+
+### 2.5.9-beta.21 {page=#/changelog}
+
+* **[fix]**:
+    - [Sideslider 侧栏](#/sideslider) 设置pointer-events
+
+
+### 2.5.9-beta.20 {page=#/changelog}
+
+* **[fix]**:
+    - [Cascade 级联选框](#/cascade) 修复事件触发参数错误问题
+
+
+### 2.5.9-beta.19 {page=#/changelog}
+
+* **[fix]**:
+    - [Cascade 级联选框](#/cascade) 修复 hover trigger 下，选中没有 children 的item，子集面板不更新的问题
+
+
+### 2.5.9-beta.18 {page=#/changelog}
+
+* **[fix]**:
+    - [Sideslider 侧栏](#/sideslider) 解决侧栏无法收起的问题
+
+
+### 2.5.9-beta.17 {page=#/changelog}
+
+* **[fix]**:
+    - [Cascade 级联选框](#/cascade) allowDisabledExpand 打开时，禁用项可选
+
+---
+
+### 2.5.9-beta.16 {page=#/changelog}
+
+* **[fix]**:
+    - [Sideslider 侧栏](#/sideslider) sideslider的quickClose失效
+
+---
+
+### 2.5.9-beta.15 {page=#/changelog}
+
+* **[add]**:
+    - [Input 输入框](#/input) 支持配置上下调整数值时的默认起始值
+    - [Cascade 级联选框](#/cascade) 禁用允许展开下一级 #516
+* **[fix]**:
+    - [Cascade 级联选框](#/cascade) 修复 cascader 在 allowDisabledExpand 下的逻辑缺陷
+* **[update]**:
+    - [ResizeLayout 可拉伸布局](#/resize-layout) 可折叠的样式规范
+
+---
+
+### 2.5.9-beta.14 {page=#/changelog}
+
+* **[add]**:
+    - [Cascade 级联选框](#/cascade) 禁用允许展开下一级
+
+---
+
+### 2.5.9-beta.13 {page=#/changelog}
+
+* **[add]**:
+    - [Select 下拉选框](#/select) tag溢出数字展示tooltips
+
+---
+
+### 2.5.9-beta.12 {page=#/changelog}
+
+* **[add]**:
+    - [Input 输入框](#/input) 支持show-overflow-tooltips
+
+---
+
+### 2.5.9-beta.11 {page=#/changelog}
+
+* **[fix]**:
+    - [Select 下拉选框](#/select) 修复虚拟滚动下”全选“逻辑失效的问题 & 双滚动条修复
+    - [Sideslider 侧栏](#/sideslider) 标题溢出hover使用title展示
+
+---
+
+### 2.5.9-beta.10 {page=#/changelog}
+
+* **[add]**:
+    - [Cascade 级联选框](#/cascade) 支持自定义 Trigger
+
+---
+
 ### 2.5.9-beta.9 {page=#/changelog}
 
 * **[fix]**:
