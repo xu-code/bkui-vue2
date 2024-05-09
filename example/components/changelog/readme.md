@@ -8,6 +8,12 @@
 
 <div class="changelog-wrapper">
 
+### 2.5.9-beta.23 {page=#/changelog}
+
+* **[fix]**:
+    - [Table 表格](#/table) table 支持shift多选
+
+
 ### 2.5.9-beta.22 {page=#/changelog}
 
 * **[fix]**:
