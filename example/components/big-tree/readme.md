@@ -480,11 +480,11 @@
 
 ### 超出滚动条 {page=#/big-tree}
 
-:::demo 默认情况下组件宽度与容器宽度相同且不会有滚动条，如果需要滚动条，需要配置`fixed-width`属性
+:::demo 默认情况下组件宽度与容器宽度相同且不会有滚动条，如果需要滚动条，需要配置`fixed-width`属性。 **注意此属性与虚拟滚动不兼容，若传入`height`属性会自动开启虚拟滚动，造成此属性失效。如果需要使用此属性，建议在容器添加`height`限制。**
 
 ```html
 <template>
-    <section style="width: 150px">
+    <section style="width: 150px;">
         <bk-big-tree
             enable-title-tip
             ref="tree"

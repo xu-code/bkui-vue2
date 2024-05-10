@@ -30,19 +30,19 @@
   <div
     :style="{ height: treeHeight }"
     :class="['bk-big-tree', extCls, { 'with-virtual-scroll': !!height }, { 'bk-big-tree--small': size === 'small' }]">
-    <div :class="['tree-wrapper', { 'fixed-width': fixedWidth }]">
-      <!-- 虚拟滚动 -->
-      <bk-virtual-scroll
-        :item-height="nodeHeight"
-        ref="virtualScroll"
-        v-if="height">
-        <tree-item slot-scope="{ data: node }"
-          :node="node" :id="`bk-big-tree-${id}-node-${node.id}`">
-          <slot :node="node" :data="node.data"></slot>
-        </tree-item>
-      </bk-virtual-scroll>
+    <!-- 虚拟滚动 -->
+    <bk-virtual-scroll
+      :item-height="nodeHeight"
+      ref="virtualScroll"
+      v-if="height">
+      <tree-item slot-scope="{ data: node }"
+        :node="node" :id="`bk-big-tree-${id}-node-${node.id}`">
+        <slot :node="node" :data="node.data"></slot>
+      </tree-item>
+    </bk-virtual-scroll>
+    <div :class="['tree-wrapper', { 'fixed-width': fixedWidth }]" style="height: 100%;" v-else>
       <!-- 非虚拟滚动 -->
-      <template v-for="node in nodes" v-else>
+      <template v-for="node in nodes">
         <tree-item
           :enable-title-tip="enableTitleTip"
           :node="node"
@@ -51,12 +51,11 @@
           <slot :node="node" :data="node.data"></slot>
         </tree-item>
       </template>
-
-      <div class="bk-big-tree-empty" v-if="($slots.empty || useDefaultEmpty) && isSearchEmpty">
-        <slot name="empty">
-          {{t('bk.bigTree.emptyText')}}
-        </slot>
-      </div>
+    </div>
+    <div class="bk-big-tree-empty" v-if="($slots.empty || useDefaultEmpty) && isSearchEmpty">
+      <slot name="empty">
+        {{t('bk.bigTree.emptyText')}}
+      </slot>
     </div>
   </div>
 </template>
