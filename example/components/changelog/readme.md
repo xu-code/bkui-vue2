@@ -8,6 +8,12 @@
 
 <div class="changelog-wrapper">
 
+### 2.5.9-beta.24 {page=#/changelog}
+
+* **[fix]**:
+    - [Big Tree 大树](#/big-tree) 修复 big-tree 组件开启虚拟滚动后无法正常显示的问题
+
+
 ### 2.5.9-beta.23 {page=#/changelog}
 
 * **[fix]**:
