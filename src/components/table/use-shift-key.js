@@ -34,12 +34,14 @@ export default (props) => {
   const handleKeyDown = (e) => {
     if (e.key === 'Shift') {
       isShiftKeyDown = true
+      document.body.style.userSelect = 'none'
     }
   }
 
   const handleKeyUp = (e) => {
     if (e.key === 'Shift') {
       isShiftKeyDown = false
+      document.body.style.userSelect = ''
       clearStore()
     }
   }
