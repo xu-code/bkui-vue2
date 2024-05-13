@@ -8,6 +8,12 @@
 
 <div class="changelog-wrapper">
 
+### 2.5.9-beta.25 {page=#/changelog}
+
+* **[fix]**:
+    - [Table 表格](#/table) fix: shift + click stop user-select
+
+
 ### 2.5.9-beta.24 {page=#/changelog}
 
 * **[fix]**:
