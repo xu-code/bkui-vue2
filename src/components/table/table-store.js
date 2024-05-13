@@ -424,9 +424,6 @@ class TableStore {
               states.selection.push(child)
             }
           })
-          setTimeout(() => {
-            this.table.$el.style.setProperty('user-select', 'inherit')
-          })
         }
 
         if (changed) {

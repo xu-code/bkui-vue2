@@ -116,10 +116,6 @@ const forced = {
           event.stopImmediatePropagation()
 
           if (disabled) return
-          const isShift = store.table.shiftMulti.isShift()
-          if (isShift) {
-            store.table.$el.style.setProperty('user-select', 'none')
-          }
 
           const result = await beforeChange()
           result !== false && store.commit('rowSelectedChanged', row, $index)
