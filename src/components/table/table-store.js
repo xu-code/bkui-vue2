@@ -417,6 +417,14 @@ class TableStore {
       rowSelectedChanged (states, row, index) {
         const changed = toggleRowSelection(states, row)
         const selection = states.selection
+        if (!this.table.shiftMulti.isShift()) {
+          if (selection.includes(row)) {
+            this.table.shiftMulti.setStartStore(row, index)
+          } else {
+            this.table.shiftMulti.setStartStore(null, null)
+          }
+        }
+
         if (this.table.shiftMulti.setStore(row, index)) {
           const { start, end } = this.table.shiftMulti.getStore()
           ;(this.table.data.slice(start.index, end.index + 1) || []).forEach(child => {
