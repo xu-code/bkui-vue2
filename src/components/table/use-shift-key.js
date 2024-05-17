@@ -46,6 +46,10 @@ export default (props) => {
     }
   }
 
+  const setStartStore = (row, index) => {
+    store.start = { index, row }
+  }
+
   const setStore = (row, index) => {
     if (!isShiftKeyDown) {
       return false
@@ -94,6 +98,7 @@ export default (props) => {
 
   return {
     isShiftKeyDown,
+    setStartStore,
     isShift,
     onUnmounted,
     setStore,
