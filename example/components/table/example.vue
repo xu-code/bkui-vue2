@@ -29,7 +29,7 @@
 <template>
   <div>
     <bk-table :row-auto-height="true" style="margin-top: 15px;" :data="data" :size="size" :pagination="pagination" :shift-multi-checked="true"
-      @page-change="handlePageChange" @page-limit-change="handlePageLimitChange">
+      @page-change="handlePageChange" @page-limit-change="handlePageLimitChange" @selection-change="handleSelectionChange">
       <bk-table-column type="selection" width="60" fixed="left"></bk-table-column>
       <bk-table-column type="index" label="序列" width="60"></bk-table-column>
       <bk-table-column label="名称/内网IP" width="130" prop="ip"></bk-table-column>
@@ -133,6 +133,72 @@ export default {
               desc: '无数据测试'
             }
           ]
+        },
+        {
+          ip: '192.168.0.31',
+          source: 'QQ',
+          status: '创建中',
+          create_time: '2018-05-25 15:02:24',
+          children: [
+            {
+              name: '用户管理',
+              count: '23',
+              creator: 'person2',
+              create_time: '2017-10-10 11:12',
+              desc: '用户管理'
+            },
+            {
+              name: '模块管理',
+              count: '2',
+              creator: 'person1',
+              create_time: '2017-10-10 11:12',
+              desc: '无数据测试'
+            }
+          ]
+        },
+        {
+          ip: '192.168.0.4',
+          source: 'QQ',
+          status: '创建中',
+          create_time: '2018-05-25 15:02:24',
+          children: [
+            {
+              name: '用户管理',
+              count: '23',
+              creator: 'person2',
+              create_time: '2017-10-10 11:12',
+              desc: '用户管理'
+            },
+            {
+              name: '模块管理',
+              count: '2',
+              creator: 'person1',
+              create_time: '2017-10-10 11:12',
+              desc: '无数据测试'
+            }
+          ]
+        },
+        {
+          ip: '192.168.0.5',
+          source: 'QQ',
+          status: '创建中',
+          create_time: '2018-05-25 15:02:24',
+          children: [
+            {
+              name: '用户管理',
+              count: '23',
+              creator: 'person2',
+              create_time: '2017-10-10 11:12',
+              desc: '用户管理'
+            },
+            {
+              name: '模块管理',
+              count: '2',
+              creator: 'person1',
+              create_time: '2017-10-10 11:12',
+              desc: '无数据测试'
+            }
+          ]
         }
       ],
       pagination: {
@@ -143,6 +209,9 @@ export default {
     }
   },
   methods: {
+    handleSelectionChange (...args) {
+      console.log('handle handleSelectionChange', args)
+    },
     handlePageLimitChange () {
       console.log('handlePageLimitChange', arguments)
     },

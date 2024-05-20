@@ -105,6 +105,116 @@
                   desc: '无数据测试'
                 }
               ]
+            },
+            {
+              ip: '192.168.0.4',
+              source: 'QQ',
+              status: '创建中',
+              create_time: '2018-05-25 15:02:24',
+              children: [
+                {
+                  name: '用户管理',
+                  count: '23',
+                  creator: 'person2',
+                  create_time: '2017-10-10 11:12',
+                  desc: '用户管理'
+                },
+                {
+                  name: '模块管理',
+                  count: '2',
+                  creator: 'person1',
+                  create_time: '2017-10-10 11:12',
+                  desc: '无数据测试'
+                }
+              ]
+            },
+            {
+              ip: '192.168.0.5',
+              source: 'QQ',
+              status: '创建中',
+              create_time: '2018-05-25 15:02:24',
+              children: [
+                {
+                  name: '用户管理',
+                  count: '23',
+                  creator: 'person2',
+                  create_time: '2017-10-10 11:12',
+                  desc: '用户管理'
+                },
+                {
+                  name: '模块管理',
+                  count: '2',
+                  creator: 'person1',
+                  create_time: '2017-10-10 11:12',
+                  desc: '无数据测试'
+                }
+              ]
+            },
+            {
+              ip: '192.168.0.6',
+              source: 'QQ',
+              status: '创建中',
+              create_time: '2018-05-25 15:02:24',
+              children: [
+                {
+                  name: '用户管理',
+                  count: '23',
+                  creator: 'person2',
+                  create_time: '2017-10-10 11:12',
+                  desc: '用户管理'
+                },
+                {
+                  name: '模块管理',
+                  count: '2',
+                  creator: 'person1',
+                  create_time: '2017-10-10 11:12',
+                  desc: '无数据测试'
+                }
+              ]
+            },
+            {
+              ip: '192.168.0.7',
+              source: 'QQ',
+              status: '创建中',
+              create_time: '2018-05-25 15:02:24',
+              children: [
+                {
+                  name: '用户管理',
+                  count: '23',
+                  creator: 'person2',
+                  create_time: '2017-10-10 11:12',
+                  desc: '用户管理'
+                },
+                {
+                  name: '模块管理',
+                  count: '2',
+                  creator: 'person1',
+                  create_time: '2017-10-10 11:12',
+                  desc: '无数据测试'
+                }
+              ]
+            },
+            {
+              ip: '192.168.0.8',
+              source: 'QQ',
+              status: '创建中',
+              create_time: '2018-05-25 15:02:24',
+              children: [
+                {
+                  name: '用户管理',
+                  count: '23',
+                  creator: 'person2',
+                  create_time: '2017-10-10 11:12',
+                  desc: '用户管理'
+                },
+                {
+                  name: '模块管理',
+                  count: '2',
+                  creator: 'person1',
+                  create_time: '2017-10-10 11:12',
+                  desc: '无数据测试'
+                }
+              ]
             }
           ],
           tableData: [
@@ -228,6 +338,9 @@
         }
       },
       methods: {
+        handleSelectionChange (...args) {
+          console.log('handle handleSelectionChange', args)
+        },
         arraySpanMethod({ row, column, rowIndex, columnIndex }) {
           if (rowIndex % 2 === 0) {
             if (columnIndex === 0) {
@@ -398,7 +511,8 @@
             @row-mouse-enter="handleRowMouseEnter"
             @row-mouse-leave="handleRowMouseLeave"
             @page-change="handlePageChange"
-            @page-limit-change="handlePageLimitChange">
+            @page-limit-change="handlePageLimitChange"
+            @selection-change="handleSelectionChange">
             <bk-table-column type="selection" width="60"></bk-table-column>
             <bk-table-column type="index" label="序列" width="60"></bk-table-column>
             <bk-table-column label="名称/内网IP" prop="ip"></bk-table-column>
@@ -841,6 +955,9 @@
             }
         },
         methods: {
+            handleSelectionChange (...args) {
+              console.log('handle handleSelectionChange', args)
+            },
             handlePageChange (page) {
                 this.pagination.current = page
             },
@@ -988,6 +1105,9 @@
             }
         },
         methods: {
+            handleSelectionChange (...args) {
+              console.log('handle handleSelectionChange', args)
+            },
             handlePageChange (page) {
                 this.pagination.current = page
             },
@@ -1026,7 +1146,8 @@
             :data="data"
             :outer-border="false"
             :size="setting.size"
-                dark-header>
+            @selection-change="handleSelectionChange"
+            dark-header>
             <bk-table-column
                 v-for="field in setting.selectedFields"
                 :key="field.id"
@@ -1096,6 +1217,9 @@
             }
         },
         methods: {
+            handleSelectionChange (...args) {
+              console.log('handle handleSelectionChange', args)
+            },
             handleSettingChange ({ fields, size }) {
                 this.setting.size = size
                 this.setting.selectedFields = fields
