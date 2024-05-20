@@ -428,9 +428,13 @@ class TableStore {
         if (this.table.shiftMulti.setStore(row, index)) {
           const { start, end } = this.table.shiftMulti.getStore()
           ;(this.table.data.slice(start.index, end.index + 1) || []).forEach(child => {
-            if (!states.selection.includes(child)) {
-              states.selection.push(child)
+            // 保证抛出参数的数组顺序
+            if (states.selection.includes(child)) {
+              const childIndex = states.selection.findIndex(col => col === child)
+              states.selection.splice(childIndex, 1)
             }
+
+            states.selection.push(child)
           })
         }
 
