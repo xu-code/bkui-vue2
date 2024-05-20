@@ -8,6 +8,12 @@
 
 <div class="changelog-wrapper">
 
+### 2.5.9-beta.26 {page=#/changelog}
+
+* **[fix]**:
+    - [Table 表格](#/table) fix: table抛出selection事件参数数组顺序
+
+
 ### 2.5.9-beta.25 {page=#/changelog}
 
 * **[fix]**:
