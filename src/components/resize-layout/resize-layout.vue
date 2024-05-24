@@ -59,8 +59,8 @@
 </template>
 
 <script>
-import { throttle } from 'throttle-debounce'
 import { addResizeListener, removeResizeListener } from '@/utils/resize-events'
+import { throttle } from 'throttle-debounce'
 export default {
   name: 'bk-resize-layout',
   props: {
@@ -115,6 +115,7 @@ export default {
       asideContentVisible: true,
       minimized: false,
       limitMax: null,
+      asideStyleValue: null,
       state: {}
     }
   },
@@ -126,12 +127,15 @@ export default {
       return this.vertical ? 'width' : 'height'
     },
     computedAsideStyle () {
-      let divide = this.initialDivide
-      if (typeof divide === 'number') {
-        divide = `${divide}px`
+      let asideStyleValue = ''
+      // 兼容 '20' 的情况
+      if (typeof this.asideStyleValue !== 'number' && isNaN(this.asideStyleValue)) {
+        asideStyleValue = this.asideStyleValue
+      } else {
+        asideStyleValue = `${this.asideStyleValue}px`
       }
       return {
-        [this.computedStyleKey]: divide
+        [this.computedStyleKey]: asideStyleValue
       }
     },
     computedTriggerStyle () {
@@ -147,6 +151,17 @@ export default {
       }
       return 0
     }
+  },
+  watch: {
+    initialDivide: {
+      handler: function (newValue, _oldValue) {
+        this.asideStyleValue = newValue
+      },
+      immediate: true
+    }
+  },
+  created () {
+    this.asideStyleValue = this.initialDivide
   },
   mounted () {
     this.setupLimit()
@@ -235,6 +250,7 @@ export default {
           const current = this.state.aside[this.computedStyleKey] + delta
           const realValue = this.getRealValue(current) + this.triggerOffset
           const pixel = `${realValue}px`
+          this.asideStyleValue = pixel
           if (this.immediate) {
             aside.style[this.computedStyleKey] = pixel
           } else {
@@ -251,6 +267,9 @@ export default {
         document.removeEventListener('mouseup', handleMouseUp)
         document.onselectstart = null
         document.ondragstart = null
+
+        this.asideStyleValue = resizeProxy.style[placement]
+
         this.$nextTick(() => {
           this.setupAutoMinimize()
           this.$emit('after-resize', parseFloat(resizeProxy.style[placement], 10))
@@ -259,7 +278,6 @@ export default {
           return false
         }
         aside.style[this.computedStyleKey] = resizeProxy.style[placement]
-        console.error('mouseup', aside.style[this.computedStyleKey])
       }
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
@@ -276,9 +294,18 @@ export default {
         this.asideContentVisible = true
         return false
       }
+
+      const prevDataWidthAttr = aside.getAttribute(`data-${this.computedStyleKey}`)
+      const prevDataWidth = (prevDataWidthAttr && `${parseFloat(prevDataWidthAttr)}px`) || this.initialDivide
+
       this.setupAsideAnimation()
+
+      // collapsed 后，this.computedAsideStyle[this.computedStyleKey] 就变成 0 了
       this.$nextTick(() => {
-        aside.setAttribute(`data-${this.computedStyleKey}`, this.computedAsideStyle[this.computedStyleKey])
+        aside.setAttribute(
+          `data-${this.computedStyleKey}`,
+          prevDataWidth
+        )
       })
     },
     setCollapse (collapsed) {
@@ -288,14 +315,14 @@ export default {
     },
     setupAsideAnimation () {
       const aside = this.$refs.aside
-      const asideRect = aside.getBoundingClientRect()
+      const previewStyleValue = aside.style[this.computedStyleKey]
       this.setupAsideListener(!this.collapsed)
       if (this.collapsed) {
-        aside.setAttribute(`data-${this.computedStyleKey}`, asideRect[this.computedStyleKey] + 'px')
-        aside.style[this.computedStyleKey] = this.collapsible ? '0' : '5px'
+        aside.setAttribute(`data-${this.computedStyleKey}`, previewStyleValue)
+        this.asideStyleValue = this.collapsible ? '0' : '5px'
       } else {
         this.asideContentVisible = true
-        aside.style[this.computedStyleKey] = aside.getAttribute(`data-${this.computedStyleKey}`)
+        this.asideStyleValue = aside.getAttribute(`data-${this.computedStyleKey}`)
       }
     },
     setupAsideListener (asideContentVisible) {
