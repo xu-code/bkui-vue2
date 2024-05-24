@@ -39,6 +39,13 @@
       <div slot="aside">aside</div>
       <div slot="main">main</div>
     </bk-resize-layout>
+
+    <!-- <bk-resize-layout collapsible :initial-divide="20" :max="420" style="height: 500px;" :auto-minimize="true" @collapse-change="handleCollapseChange">
+      <template #aside>
+        {{sss}}
+      </template>
+      <template #main>main</template>
+    </bk-resize-layout> -->
   </div>
 </template>
 
@@ -53,13 +60,20 @@ export default {
   data () {
     return {
       disabled: false,
-      min: 100
+      min: 100,
+      max: 400,
+      sss: 'dddd'
     }
   },
   methods: {
     handleResizing (height) {
       console.log(height)
       this.disabled = (height - 3) <= this.min
+    },
+
+    handleCollapseChange (v) {
+      this.sss = +new Date()
+      console.error(v)
     }
   }
 }

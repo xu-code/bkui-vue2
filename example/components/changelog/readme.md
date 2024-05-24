@@ -8,6 +8,12 @@
 
 <div class="changelog-wrapper">
 
+### 2.5.9-beta.27 {page=#/changelog}
+
+* **[fix]**:
+    - [ResizeLayout 可拉伸布局](#/resize-layout) 修复 resize-layout 组件 aside slot 中重新渲染导致无法 collapse 的问题
+
+
 ### 2.5.9-beta.26 {page=#/changelog}
 
 * **[fix]**:
