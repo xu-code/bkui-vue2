@@ -90,7 +90,7 @@
             ref="searchInput"
             type="text"
             :placeholder="t('bk.select.searchPlaceholder')"
-            v-if="filterable"
+            v-if="filterable && (isUnselected && changeImmediately)"
             @input="handleSearchInput"
             v-model="searchContent">
           <span v-else>{{selectedName}}</span>
@@ -182,6 +182,10 @@ export default {
     value: {
       type: Array,
       default: () => []
+    },
+    changeImmediately: {
+      type: Boolean,
+      default: false
     },
     placeholder: {
       type: String,
