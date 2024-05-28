@@ -515,7 +515,7 @@ export default {
         // 修复数字类型 多选不展示问题：因为整个组件 基于  join 与split 方法，如：changeList 方法
         // item.id = item[idKey]
         item.id = this.multiple ? String(item[idKey]) : item[idKey]
-        item.name = item[nameKey] || ''
+        item.name = item[nameKey] ?? ''
         const children = item[childrenKey]
         if (Array.isArray(children)) {
           item.children = this.recurrenceNodes(children)
