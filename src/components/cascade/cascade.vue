@@ -85,12 +85,13 @@
           </div>
         </template>
         <div class="bk-cascade-name" :title="selectedName" v-else>
+          {{/*  changeImmediately 开启时，要求 filterable 为 ture，且未选择； 默认情况下只要 filterable 为 true，就打开搜索，不破坏原有逻辑  */}}
           <input
+            v-if="changeImmediately ? filterable && currentList.length === 0 : filterable"
             class="bk-cascade-search-input"
             ref="searchInput"
             type="text"
             :placeholder="t('bk.select.searchPlaceholder')"
-            v-if="filterable && (isUnselected && changeImmediately)"
             @input="handleSearchInput"
             v-model="searchContent">
           <span v-else>{{selectedName}}</span>
@@ -519,7 +520,8 @@ export default {
         // 修复数字类型 多选不展示问题：因为整个组件 基于  join 与split 方法，如：changeList 方法
         // item.id = item[idKey]
         item.id = this.multiple ? String(item[idKey]) : item[idKey]
-        item.name = item[nameKey] ?? ''
+        // 这里不可以使用 `item[nameKey] || ''`， 因为如果是 0，将变为空字符串无法渲染； 同时因暂不支持`??`语法，而暂时如此改之
+        item.name = (item[nameKey] !== null && item[nameKey] !== undefined) ? item[nameKey] : ''
         const children = item[childrenKey]
         if (Array.isArray(children)) {
           item.children = this.recurrenceNodes(children)
