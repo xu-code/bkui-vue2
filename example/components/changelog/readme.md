@@ -8,6 +8,12 @@
 
 <div class="changelog-wrapper">
 
+### 2.5.9-beta.29 {page=#/changelog}
+
+* **[fix]**:
+    - [Cascade 级联选框](#/cascade) 当list-item 的 value 为 0 时，无法显示 #543
+
+
 ### 2.5.9-beta.27 {page=#/changelog}
 
 * **[fix]**:
