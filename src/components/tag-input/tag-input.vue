@@ -30,10 +30,11 @@
   <div class="bk-tag-selector" :class="[extCls, { resizing }]" @click="focusInputer($event)" ref="bkTagSelector" @mouseenter="mouseEnterHandler" @mouseleave="hover = false">
     <div :class="['bk-tag-input', { 'active': isEdit, 'disabled': disabled }]">
       <ul class="tag-list" :class="!localTagList.length ? 'no-item' : ''" ref="tagList" :style="{ 'margin-left': `${leftSpace}px` }">
+        <!-- :key="tag[saveKey] !== undefined ? tag[saveKey] : index" -->
         <li
           class="key-node"
           v-for="(tag, index) in localTagList"
-          :key="tag[saveKey] !== undefined ? tag[saveKey] : index"
+          :key="index"
           @click="selectTag($event, tag)"
           :style="{ display: (!resizing && enableCollapseTags && index >= overflowTagIndex) ? 'none' : '' }"
           v-bk-tooltips.light="{ boundary: 'window', content: tag[tooltipKey], disabled: !tooltipKey }">
@@ -265,6 +266,10 @@ export default {
       default: null
     },
     collapseTags: {
+      type: Boolean,
+      default: false
+    },
+    allowRepeat: {
       type: Boolean,
       default: false
     }
@@ -647,7 +652,7 @@ export default {
           if (val !== undefined) {
             this.localTagList.push(val)
             this.tagList.push(val[this.saveKey])
-          } else if (this.allowCreate && !this.tagList.includes(tag)) {
+          } else if (this.allowCreate && (this.allowRepeat || !this.tagList.includes(tag))) {
             const temp = { [this.saveKey]: tag, [this.displayKey]: tag }
             this.localTagList.splice(this.localTagList.length, 0, temp)
             this.tagList.splice(this.tagList.length, 0, tag)
@@ -657,7 +662,7 @@ export default {
         // 如果不是单选时，需要将已选的过滤掉
         if (!this.isSingleSelect) {
           this.initData = this.initData.filter(val => {
-            return !this.value.includes(val[this.saveKey])
+            return (this.allowRepeat || !this.value.includes(val[this.saveKey]))
           })
         }
         // this.initData = this.initData.filter(val => !this.value.some(tag => tag.includes(val[this.saveKey])))
@@ -738,13 +743,13 @@ export default {
         const nodes = this.$refs.tagList.childNodes
         const result = this.getSiteInfo()
         const localTags = []
-        const localInitDara = []
+        const localInitData = []
 
         this.initData.map(data => {
-          localInitDara.push(data[this.saveKey])
+          localInitData.push(data[this.saveKey])
         })
         tags = tags.filter(tag => {
-          return tag && tag.trim() && !this.tagList.includes(tag) && localInitDara.includes(tag)
+          return tag && tag.trim() && (this.allowRepeat || !this.tagList.includes(tag)) && localInitData.includes(tag)
         })
 
         // 最大显示限制处理
@@ -778,7 +783,7 @@ export default {
           //     this.initData = this.initData.filter(val => !tag.includes(val[this.saveKey]))
           // })
           this.initData = this.initData.filter(val => {
-            return !tags.includes(val[this.saveKey])
+            return (this.allowRepeat || !tags.includes(val[this.saveKey]))
           })
           this.handlerChange('select')
         }
@@ -1010,7 +1015,7 @@ export default {
           tags = item.split(this.separator)
           tags = tags.filter(tag => {
             const validate = typeof this.createTagValidator === 'function' ? this.createTagValidator(tag) : true
-            return tag && tag.trim() && !this.tagList.includes(tag) && validate
+            return tag && tag.trim() && (this.allowRepeat || !this.tagList.includes(tag)) && validate
           })
           tags.forEach(tag => {
             const temp = {}
@@ -1028,7 +1033,7 @@ export default {
           if (typeof item === 'object') {
             newVal = item[this.saveKey]
             const validate = typeof this.createTagValidator === 'function' ? this.createTagValidator(newVal) : true
-            if (newVal && !this.tagList.includes(newVal) && validate) {
+            if (newVal && (this.allowRepeat || !this.tagList.includes(newVal)) && validate) {
               newVal = newVal.replace(/\s+/g, '')
 
               if (newVal !== undefined) {
@@ -1043,7 +1048,7 @@ export default {
             localItem[this.saveKey] = newVal
             localItem[this.displayKey] = newVal
             const validate = typeof this.createTagValidator === 'function' ? this.createTagValidator(newVal) : true
-            if (newVal !== undefined && !this.tagList.includes(newVal) && validate) {
+            if (newVal !== undefined && validate && (this.allowRepeat || !this.tagList.includes(newVal))) {
               this.tagList.splice(result.index, 0, newVal)
               this.localTagList.splice(result.index, 0, localItem)
               isSelected = true
@@ -1052,7 +1057,7 @@ export default {
         }
       } else if (item) {
         newVal = item[this.saveKey]
-        if (newVal !== undefined && !this.tagList.includes(newVal)) {
+        if (newVal !== undefined && (this.allowRepeat || !this.tagList.includes(newVal))) {
           this.tagList.splice(result.index, 0, newVal)
           this.localTagList.splice(result.index, 0, item)
           isSelected = true
@@ -1073,7 +1078,7 @@ export default {
           // 如果不是单选，将已经选中的项从数据列表中去除
           if (!this.isSingleSelect) {
             this.initData = this.initData.filter(val => {
-              return !this.tagList.includes(val[this.saveKey])
+              return (this.allowRepeat || !this.tagList.includes(val[this.saveKey]))
             })
           }
         })
