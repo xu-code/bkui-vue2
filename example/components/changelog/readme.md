@@ -8,6 +8,12 @@
 
 <div class="changelog-wrapper">
 
+### 2.5.9-beta.30 {page=#/changelog}
+
+* **[feat]**:
+    - [TagInput 标签输入框](#/tag-input) 新增 `allow-repeat` 属性，用来支持重复输入，默认为 `false`
+
+
 ### 2.5.9-beta.29 {page=#/changelog}
 
 * **[fix]**:
