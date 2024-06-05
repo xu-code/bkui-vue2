@@ -12,7 +12,7 @@
                 isShowCheckbox: false,
                 isShowLinkLine: false,
                 isShowLinkLine2: true,
-                data: this.getNodes(null, 10, 2),
+                data: Object.freeze(this.getNodes(null, 10, 2)),
                 tree: [
                         { identifier: 1, folder: false, name: '文件1' },
                         { identifier: 2, folder: true, name: '目录1' },

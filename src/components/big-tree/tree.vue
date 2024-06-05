@@ -29,15 +29,22 @@
 <template>
   <div
     :style="{ height: treeHeight }"
-    :class="['bk-big-tree', extCls, { 'with-virtual-scroll': !!height }, { 'bk-big-tree--small': size === 'small' }]">
+    :class="{
+      'bk-big-tree': true,
+      [extCls]: true,
+      'with-virtual-scroll': !!height,
+      'bk-big-tree--small': size === 'small'
+    }">
     <!-- 虚拟滚动 -->
     <bk-virtual-scroll
       :item-height="nodeHeight"
       ref="virtualScroll"
       v-if="height">
-      <tree-item slot-scope="{ data: node }"
-        :node="node" :id="`bk-big-tree-${id}-node-${node.id}`">
-        <slot :node="node" :data="node.data"></slot>
+      <tree-item
+        slot-scope="{ data: node }"
+        :node="node"
+        :id="`bk-big-tree-${id}-node-${node.id}`">
+        <slot :node="node" :data="node.data" />
       </tree-item>
     </bk-virtual-scroll>
     <div :class="['tree-wrapper', { 'fixed-width': fixedWidth }]" style="height: 100%;" v-else>
@@ -48,7 +55,7 @@
           :node="node"
           :ref="node.id"
           :key="node.id">
-          <slot :node="node" :data="node.data"></slot>
+          <slot :node="node" :data="node.data" />
         </tree-item>
       </template>
     </div>
@@ -66,7 +73,9 @@ import { isNullOrUndefined, convertToArray } from './utils.js'
 import locale from 'bk-magic-vue/lib/locale'
 import bkVirtualScroll from '@/components/virtual-scroll'
 import treeItem from './tree-item.vue'
+
 let idSeed = 0
+
 export default {
   name: 'bk-big-tree',
   components: {
@@ -122,22 +131,26 @@ export default {
       type: [String, Function]
     },
     defaultExpandAll: Boolean,
+    // 默认展开节点 id
     defaultExpandedNodes: {
       type: Array,
       default () {
         return []
       }
     },
+    // 默认 check 节点 id
     defaultCheckedNodes: {
       type: Array,
       default () {
         return []
       }
     },
+    // 默认选中节点 id
     defaultSelectedNode: {
       type: [String, Number],
       default: null
     },
+    // 默认禁用节点 id
     defaultDisabledNodes: {
       type: Array,
       default () {
@@ -190,7 +203,6 @@ export default {
   data () {
     return {
       nodes: [],
-      map: {},
       selected: this.defaultSelectedNode,
       needsCalculateNodes: [],
       calculateTimer: null,
@@ -238,9 +250,17 @@ export default {
     data (value) {
       this.setData(value)
     },
-    hasLine (hasLine) {
-      hasLine && this.needsCalculateNodes.push(...this.visibleNodes)
+    hasLine: {
+      handler () {
+        if (this.hasLine) {
+          this.needsCalculateNodes = Object.freeze([...this.needsCalculateNodes, ...this.visibleNodes])
+        }
+      },
+      immediate: true
     }
+  },
+  created () {
+    this.map = {}
   },
   mounted () {
     this.setData(this.data)
@@ -250,12 +270,44 @@ export default {
       const nodes = []
       const map = {}
       this.recurrenceNodes(data, null, nodes, map)
-      this.nodes = nodes
+      this.nodes = Object.freeze(nodes)
       this.map = map
       this.initNodeState()
       this.setVirtualScrollList()
       this.registryOptions(this.nodes)
-      this.hasLine && this.needsCalculateNodes.push(...this.visibleNodes)
+    },
+    initNodeState () {
+      // 默认展开
+      if (!this.defaultExpandAll) {
+        const defaultExpandedNodes = [...this.defaultExpandedNodes]
+
+        if (this.defaultSelectedNode) {
+          defaultExpandedNodes.push(this.defaultSelectedNode)
+        }
+
+        defaultExpandedNodes.forEach(id => {
+          const node = this.getNodeById(id)
+          if (node) {
+            node.expanded = true
+          }
+        })
+      }
+
+      // 默认选中
+      this.defaultCheckedNodes.forEach(id => {
+        const node = this.getNodeById(id)
+        if (node) {
+          node.checked = true
+        }
+      })
+
+      // 默认禁用
+      this.defaultDisabledNodes.forEach(id => {
+        const node = this.getNodeById(id)
+        if (node) {
+          node.disabled = true
+        }
+      })
     },
     // 当在select组件嵌套tree时自动注册options，兼容select组件逻辑
     registryOptions (nodes) {
@@ -276,7 +328,7 @@ export default {
       }
     },
     recurrenceNodes (data, parent, nodes, map) {
-      data.forEach((datum, index) => {
+      data.forEach((datum) => {
         const node = new TreeNode(datum, {
           level: parent ? parent.level + 1 : 0,
           parent: parent,
@@ -298,36 +350,6 @@ export default {
     getNodeById (id) {
       return this.map[id]
     },
-    initNodeState () {
-      !this.defaultExpandAll && this.initDefaultExpanded()
-      this.initDefaultChecked()
-      this.initDefaultDisabled()
-    },
-    initDefaultExpanded () {
-      const defaultExpandedNodes = this.defaultSelectedNode !== null ? [...this.defaultExpandedNodes, this.defaultSelectedNode] : this.defaultExpandedNodes
-      defaultExpandedNodes.forEach(id => {
-        const node = this.getNodeById(id)
-        if (node) {
-          node.expanded = true
-        }
-      })
-    },
-    initDefaultChecked () {
-      this.defaultCheckedNodes.forEach(id => {
-        const node = this.getNodeById(id)
-        if (node) {
-          node.checked = true
-        }
-      })
-    },
-    initDefaultDisabled () {
-      this.defaultDisabledNodes.forEach(id => {
-        const node = this.getNodeById(id)
-        if (node) {
-          node.disabled = true
-        }
-      })
-    },
     addNode (nodeData, parentId, trailing = true) {
       const options = typeof parentId === 'object' ? parentId : { parentId, trailing }
       const mergeOptions = Object.assign({
@@ -345,7 +367,8 @@ export default {
       return this.addChildNode(data, mergeOptions)
     },
     addRootNode (data, { trailing }) {
-      const rootNodes = this.nodes.filter(node => node.level === 0)
+      const lastNodes = [...this.nodes]
+      const rootNodes = lastNodes.filter(node => node.level === 0)
       const offset = typeof trailing === 'number'
         ? Math.min(trailing, rootNodes.length)
         : trailing
@@ -365,12 +388,13 @@ export default {
         }, this)
       })
       nodes.forEach(node => {
-        this.$set(this.map, node.id, node)
+        this.map[node.id] = node
       })
-      this.nodes.splice(insertIndex, 0, ...nodes)
-      this.nodes.slice(insertIndex).forEach((node, index) => {
+      lastNodes.splice(insertIndex, 0, ...nodes)
+      lastNodes.slice(insertIndex).forEach((node, index) => {
         node.index = insertIndex + index
       })
+      this.nodes = Object.freeze(lastNodes)
       this.setVirtualScrollList()
       return nodes
     },
@@ -404,12 +428,14 @@ export default {
       })
       parent.appendChild(nodes, offset, options)
       nodes.forEach(node => {
-        this.$set(this.map, node.id, node)
+        this.map[node.id] = node
       })
-      this.nodes.splice(insertIndex, 0, ...nodes)
-      this.nodes.slice(insertIndex).forEach((node, index) => {
+      const lastNodes = [...this.nodes]
+      lastNodes.splice(insertIndex, 0, ...nodes)
+      lastNodes.slice(insertIndex).forEach((node, index) => {
         node.index = insertIndex + index
       })
+      this.nodes = Object.freeze(lastNodes)
       this.setVirtualScrollList()
       return nodes
     },
@@ -433,9 +459,12 @@ export default {
           }
         })
         const minChangedIndex = Math.min(...nodes.map(node => node.index))
-        this.nodes.slice(minChangedIndex).forEach((node, index) => {
+
+        const lastNodes = [...this.nodes]
+        lastNodes.slice(minChangedIndex).forEach((node, index) => {
           node.index = minChangedIndex + index
         })
+        this.nodes = Object.freeze(lastNodes)
         this.setVirtualScrollList()
       } catch (e) {
         console.warn(e.message)
@@ -509,6 +538,8 @@ export default {
               this.$emit('check-change', this.checked, isMultiple ? nodes : nodes[0])
             }, 0)
           }
+          const lastNodes = [...this.nodes]
+          this.nodes = Object.freeze(lastNodes)
         }
       } catch (e) {
         console.warn(e.message)
@@ -530,6 +561,7 @@ export default {
         if (mergeOptions.emitEvent) {
           this.$emit('expand-change', node)
         }
+        this.nodes = Object.freeze([...this.nodes])
         this.setVirtualScrollList()
       } catch (e) {
         console.warn(e.message)
@@ -550,6 +582,7 @@ export default {
         if (mergeOptions.emitEvent) {
           this.$emit('disable-change', nodes.length > 1 ? nodes : nodes[0])
         }
+        this.nodes = Object.freeze([...this.nodes])
       } catch (e) {
         console.warn(e.message)
       }
@@ -569,53 +602,57 @@ export default {
         if (mergeOptions.emitEvent) {
           this.$emit('disable-check-change', nodes.length > 1 ? nodes : nodes[0])
         }
+        this.nodes = Object.freeze([...this.nodes])
       } catch (e) {
         console.warn(e.message)
       }
     },
     handleCalculateLine () {
+      const calculateNodeLine = (node) => {
+        const {
+          children,
+          isLeaf,
+          expanded
+        } = node
+        if (isLeaf || !expanded) {
+          node.line = 0
+          return
+        }
+        const visibleChildren = children.filter(child => child.visible)
+        if (!visibleChildren.length) {
+          node.line = 0
+          return
+        }
+        const firstChild = visibleChildren[0]
+        const firstChildElement = this.$el.querySelector(`#${firstChild.uid}`)
+        const lastChild = visibleChildren[visibleChildren.length - 1]
+        const lastChildElement = this.$el.querySelector(`#${lastChild.uid}`)
+        node.line = lastChildElement.getBoundingClientRect().bottom - firstChildElement.getBoundingClientRect().top
+      }
       this.calculateTimer && clearTimeout(this.calculateTimer)
       if (this.needsCalculateNodes.length) {
         this.calculateTimer = setTimeout(() => {
           this.needsCalculateNodes.forEach(node => {
-            this.calculateNodeLine(node)
+            calculateNodeLine(node)
           })
           this.needsCalculateNodes.splice(0)
+          this.nodes = Object.freeze([...this.nodes])
         }, 0)
       } else {
         this.calculateTimer = null
       }
     },
-    calculateNodeLine (node) {
-      const {
-        children,
-        isLeaf,
-        expanded
-      } = node
-      if (isLeaf || !expanded) {
-        node.line = 0
-        return
-      }
-      const visibleChildren = children.filter(child => child.visible)
-      if (!visibleChildren.length) {
-        node.line = 0
-        return
-      }
-      const firstChild = visibleChildren[0]
-      const firstChildElement = this.$el.querySelector(`#${firstChild.uid}`)
-      const lastChild = visibleChildren[visibleChildren.length - 1]
-      const lastChildElement = this.$el.querySelector(`#${lastChild.uid}`)
-      node.line = lastChildElement.getBoundingClientRect().bottom - firstChildElement.getBoundingClientRect().top
-    },
+
     defaultFilterMethod (keyword, node) {
       return String(node.name).toLowerCase().indexOf(keyword) > -1
     },
     filter (keyword = '') {
+      const lastNodes = [...this.nodes]
       const matchedNodes = []
       const filterMethod = this.filterMethod || this.defaultFilterMethod
       if (keyword === '') {
         this.inSearch = false
-        this.nodes.forEach(node => {
+        lastNodes.forEach(node => {
           node.setState('matched', true)
           node.recalculateLinkLine()
           if (this.checkOnlyAvailableStrictly) {
@@ -626,7 +663,7 @@ export default {
       } else {
         this.inSearch = true
         const convertKeyword = this.filterMethod ? keyword : String(keyword).toLowerCase()
-        this.nodes.forEach(node => {
+        lastNodes.forEach(node => {
           const matched = filterMethod(convertKeyword, node)
           node.setState('matched', matched)
           if (this.checkOnlyAvailableStrictly) {
@@ -640,6 +677,7 @@ export default {
         })
       }
       this.isSearchEmpty = matchedNodes.length === 0
+      this.nodes = Object.freeze(lastNodes)
       this.setVirtualScrollList()
       return matchedNodes
     },
