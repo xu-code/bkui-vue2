@@ -8,6 +8,12 @@
 
 <div class="changelog-wrapper">
 
+### 2.5.9-beta.31 {page=#/changelog}
+
+* **[feat]**:
+    - [Big Tree 大树](#/big-tree) 性能优化
+
+
 ### 2.5.9-beta.30 {page=#/changelog}
 
 * **[feat]**:
