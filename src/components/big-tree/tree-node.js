@@ -329,11 +329,12 @@ export default class TreeNode {
 
   recalculateLinkLine () {
     if (this.tree.hasLine) {
-      const needsCalculateNodes = this.tree.needsCalculateNodes
+      const needsCalculateNodes = [...this.tree.needsCalculateNodes]
       if (needsCalculateNodes.includes(this)) {
         return false
       }
       needsCalculateNodes.push(this)
+      this.tree.needsCalculateNodes = Object.freeze(needsCalculateNodes)
       this.parent && this.parent.recalculateLinkLine()
     }
   }

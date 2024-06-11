@@ -27,8 +27,13 @@
 -->
 
 <template>
-  <section class="bk-scroll-home" :class="extCls" @mousewheel="handleWheel" @DOMMouseScroll="handleWheel" ref="scrollHome">
-    <main class="bk-scroll-main">
+  <div
+    ref="scrollHome"
+    class="bk-scroll-home"
+    :class="extCls"
+    @mousewheel="handleWheel"
+    @DOMMouseScroll="handleWheel">
+    <div class="bk-scroll-main">
       <ul
         class="bk-scroll-index bk-scroll"
         :style="{
@@ -71,7 +76,7 @@
           <slot :data="item.value"></slot>
         </li>
       </ul>
-    </main>
+    </div>
     <canvas class="bk-min-nav" :style="`height: ${visHeight}px;`" ref="minNav"></canvas>
     <span
       ref="scrollNav"
@@ -92,10 +97,12 @@
       }"
       @mousedown="startBottomMove">
     </span>
-  </section>
+  </div>
 </template>
 
 <script>
+import { throttle } from 'throttle-debounce'
+
 export default {
   name: 'bk-virtual-scroll',
   props: {
@@ -162,7 +169,9 @@ export default {
       deep: true
     }
   },
-
+  created () {
+    this.calcList = throttle(30, this.calcData)
+  },
   mounted () {
     this.initStatus()
     this.initEvent()
@@ -302,7 +311,7 @@ export default {
       this.calcList(postData)
     },
 
-    calcList ({ totalScrollHeight, itemHeight, itemNumber, canvasHeight, minMapTop, totalHeight, mapHeight, isResize }) {
+    calcData ({ totalScrollHeight, itemHeight, itemNumber, canvasHeight, minMapTop, totalHeight, mapHeight, isResize }) {
       const realHeight = (mapHeight === canvasHeight / 8) ? 0 : (minMapTop / (mapHeight - canvasHeight / 8) * (totalHeight - canvasHeight))
       let startIndex = Math.floor(realHeight / itemHeight)
       const endIndex = startIndex + itemNumber
@@ -322,19 +331,22 @@ export default {
 
       totalScrollHeight = totalScrollHeight - nums * 500000
 
-      this.indexList = indexList
-      this.listData = listData
+      this.indexList = Object.freeze(indexList)
+      this.listData = Object.freeze(listData)
       this.totalScrollHeight = totalScrollHeight
-      const firstIndexObj = this.indexList[0] || {}
-      const lastIndexObj = this.indexList[this.indexList.length - 1] || {}
+      const firstIndexObj = indexList[0] || {}
+      const lastIndexObj = indexList[indexList.length - 1] || {}
       this.downPreDefault = lastIndexObj.value + 1 < this.totalNumber
       this.upPreDefault = firstIndexObj.value > 1
       this.isScrolling = false
-      this.$emit('change', listData.map(x => x.value))
+
+      if (this.$listeners.change) {
+        this.$emit('change', listData.map(x => x.value))
+      }
     },
 
     addListData (list) {
-      this.allListData = this.allListData.concat(list)
+      this.allListData = Object.freeze([...this.allListData, ...list])
       const number = this.totalNumber + list.length
       const lastIndexData = this.indexList[this.indexList.length - 1] || { value: 0 }
       if (this.totalNumber - lastIndexData.value <= 3) {
@@ -346,7 +358,7 @@ export default {
     },
 
     setListData (list) {
-      this.allListData = list
+      this.allListData = Object.freeze(list)
       this.freshDataNoScroll(list.length)
       this.resize()
     },
