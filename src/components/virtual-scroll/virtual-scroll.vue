@@ -64,17 +64,15 @@
           width: `${mainWidth}px`,
           left: `${mainLeft}px`
         }">
-        <li
+        <RenderSlot
+          v-for="(item) in listData"
           class="bk-scroll-item"
-          v-for="item in listData"
           :key="item.top"
-          :style="{
-            height: `${itemHeight}px`,
-            top: `${item.top}px`,
-            left: `${-bottomScrollDis * (itemWidth - mainWidth) / (mainWidth - bottomScrollWidth)}px`
-          }">
-          <slot :data="item.value"></slot>
-        </li>
+          :data="item.value"
+          :height="itemHeight"
+          :top="item.top"
+          :render-item="renderItem"
+          :left="-bottomScrollDis * (itemWidth - mainWidth) / (mainWidth - bottomScrollWidth)" />
       </ul>
     </div>
     <canvas class="bk-min-nav" :style="`height: ${visHeight}px;`" ref="minNav"></canvas>
@@ -102,9 +100,13 @@
 
 <script>
 import { throttle } from 'throttle-debounce'
+import RenderSlot from './render-slot.js'
 
 export default {
   name: 'bk-virtual-scroll',
+  components: {
+    RenderSlot
+  },
   props: {
     itemHeight: {
       type: Number,
@@ -212,6 +214,14 @@ export default {
           attributeFilter: ['style']
         })
       }
+    },
+    // 嵌套 slot 时，当前组件更新时会强制更新直接父级组件更新
+    // 使用 render 函数渲染避免多余的更新
+    renderItem (data) {
+      if (this.$scopedSlots && this.$scopedSlots.default) {
+        return this.$scopedSlots.default({ data })
+      }
+      return null
     },
 
     resize (event) {
