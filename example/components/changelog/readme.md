@@ -8,6 +8,12 @@
 
 <div class="changelog-wrapper">
 
+### 2.5.9-beta.34 {page=#/changelog}
+
+* **[feat]**:
+    - perf(virtual-scroll): 优化 slot 渲染方式
+
+
 ### 2.5.9-beta.33 {page=#/changelog}
 
 * **[feat]**:
