@@ -139,7 +139,11 @@ const bkTooltips = {
   update (el, binding) {
     const value = binding.value
     const isObject = typeof value === 'object'
-    const content = isObject ? value.content : value
+    let content = value // 默认传进来的是字符串
+    if (isObject) {
+      // 如果是对象, content优先使用html作为tippy内容
+      content = value.html || value.content
+    }
     const disabled = isObject ? value.disabled : false
     if (disabled || !content) {
       el._tippy && el._tippy.destroy()
@@ -148,12 +152,8 @@ const bkTooltips = {
       if (!el._tippy) {
         el.tippyInstance = createTippy(el, binding)
       } else {
-        // TODO: 暂时先这样处理，如果是 html 那么再次实例化，如果不实例化只是更新 html 内容的话，那么第一次绑定的事件会消失
-        if (typeof value === 'object' && (binding.value.allowHtml || binding.value.allowHTML)) {
-          el.tippyInstance = createTippy(el, binding)
-        } else {
-          el._tippy.setContent(content)
-        }
+        // 重新设置内容即可
+        el._tippy.setContent(content)
       }
     }
   }
